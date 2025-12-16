@@ -270,6 +270,35 @@
             lucide.createIcons();
         }
 
+        // CARGAR TODOS LOS DATOS DEL ADMIN
+        window.loadAdminData = async function() {
+            try {
+                // Cargar datos en paralelo
+                const [categories, courses, coupons, orders, members] = await Promise.all([
+                    window.API.apiGetCategories(),
+                    window.API.apiGetAllCourses(),
+                    window.API.apiGetCoupons(),
+                    window.API.apiGetOrders(),
+                    window.API.apiGetAllUsers()
+                ]);
+                
+                state.categories = categories || [];
+                state.courses = courses || [];
+                state.coupons = coupons || [];
+                state.members = members || [];
+                
+                console.log('✅ Admin data loaded:', {
+                    categories: state.categories.length,
+                    courses: state.courses.length,
+                    coupons: state.coupons.length,
+                    members: state.members.length
+                });
+            } catch(err) {
+                console.error('❌ Error loading admin data:', err);
+                showToast('Error cargando datos', 'error');
+            }
+        };
+
         // --- LÓGICA DE EDICIÓN Y CREACIÓN ---
         function resetAndCreateCourse() {
             state.editingCourseId = null; // Limpiar modo edición
